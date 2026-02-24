@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Frame &amp; Fortune | Frame What You Love</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600;800&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:   #080705;
+      --deep:    #100e08;
+      --gold1:   #c9952a;
+      --gold2:   #e8bf6a;
+      --gold3:   #f5dfa0;
+      --cream:   #fdf6e3;
+      --text:    #e8d8b0;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--black);
+      color: var(--text);
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    /* NOISE OVERLAY */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.4;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 900;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 48px;
+      background: linear-gradient(to bottom, rgba(8,7,5,0.96) 0%, transparent 100%);
+    }
+
+    .nav-logo {
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      color: var(--gold2);
+      text-decoration: none;
+    }
+
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+
+    .nav-links a {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      color: var(--text);
+      text-decoration: none;
+      text-transform: uppercase;
+      opacity: 0.7;
+      transition: opacity 0.3s, color 0.3s;
+    }
+    .nav-links a:hover { opacity: 1; color: var(--gold2); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 120px 24px 80px;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -55%);
+      width: 700px; height: 700px;
+      background: radial-gradient(ellipse, rgba(201,149,42,0.13) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-rule {
+      width: 1px; height: 80px;
+      background: linear-gradient(to bottom, transparent, var(--gold1), transparent);
+      margin-bottom: 40px;
+      animation: fadeDown 1.2s ease forwards;
+      opacity: 0;
+    }
+
+    .logo-wrap {
+      position: relative; z-index: 2;
+      animation: fadeUp 1s 0.3s ease forwards;
+      opacity: 0;
+    }
+
+    .logo-wrap img {
+      width: clamp(260px, 38vw, 480px);
+      filter: drop-shadow(0 0 40px rgba(201,149,42,0.35)) drop-shadow(0 0 80px rgba(201,149,42,0.15));
+      transition: filter 0.5s;
+    }
+    .logo-wrap img:hover {
+      filter: drop-shadow(0 0 60px rgba(232,191,106,0.55)) drop-shadow(0 0 100px rgba(201,149,42,0.2));
+    }
+
+    .hero-tagline {
+      margin-top: 36px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.4rem, 3vw, 2.2rem);
+      font-style: italic; font-weight: 300;
+      letter-spacing: 0.12em;
+      color: var(--gold3);
+      animation: fadeUp 1s 0.6s ease forwards; opacity: 0;
+      text-align: center;
+    }
+
+    .hero-sub {
+      margin-top: 16px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem; letter-spacing: 0.5em;
+      color: var(--gold1); text-transform: uppercase;
+      animation: fadeUp 1s 0.9s ease forwards; opacity: 0;
+      text-align: center;
+    }
+
+    .ornament {
+      display: flex; align-items: center; gap: 20px;
+      margin-top: 48px;
+      animation: fadeUp 1s 1.1s ease forwards; opacity: 0;
+    }
+    .ornament-line {
+      width: 80px; height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold1));
+    }
+    .ornament-line.right { background: linear-gradient(to left, transparent, var(--gold1)); }
+    .ornament-diamond { width: 6px; height: 6px; background: var(--gold2); transform: rotate(45deg); }
+
+    .cta-group {
+      margin-top: 52px;
+      display: flex; flex-direction: column; align-items: center; gap: 16px;
+      animation: fadeUp 1s 1.3s ease forwards; opacity: 0;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      padding: 16px 48px;
+      border: 1px solid var(--gold1);
+      background: transparent;
+      color: var(--gold2);
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem; font-weight: 600; letter-spacing: 0.4em;
+      text-transform: uppercase; text-decoration: none;
+      cursor: pointer; position: relative; overflow: hidden;
+      transition: color 0.4s;
+    }
+    .btn-primary::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, var(--gold1), var(--gold2));
+      transform: translateX(-105%); transition: transform 0.4s ease;
+    }
+    .btn-primary:hover::before { transform: translateX(0); }
+    .btn-primary:hover { color: var(--black); }
+    .btn-primary span { position: relative; z-index: 1; }
+
+    .btn-notify {
+      font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.3em;
+      color: var(--gold1); opacity: 0.6;
+      text-decoration: underline; text-underline-offset: 4px;
+      background: none; border: none; cursor: pointer;
+      transition: opacity 0.3s;
+    }
+    .btn-notify:hover { opacity: 1; }
+
+    .scroll-hint {
+      position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      animation: fadeUp 1s 1.8s ease forwards; opacity: 0;
+    }
+    .scroll-hint span {
+      font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.4em;
+      color: var(--gold1); opacity: 0.5; text-transform: uppercase;
+    }
+    .scroll-arrow {
+      width: 1px; height: 40px;
+      background: linear-gradient(to bottom, var(--gold1), transparent);
+      animation: scrollDown 1.5s 2s infinite;
+    }
+
+    /* DIVIDER */
+    .section-divider {
+      display: flex; align-items: center; gap: 24px;
+      padding: 0 clamp(24px, 8vw, 120px);
+      margin: 0 auto; max-width: 1200px;
+    }
+    .divider-line {
+      flex: 1; height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold1) 30%, var(--gold1) 70%, transparent);
+      opacity: 0.35;
+    }
+    .divider-icon { font-size: 1rem; color: var(--gold1); opacity: 0.55; }
+
+    /* COLLECTIONS */
+    .collections {
+      padding: 80px clamp(24px, 8vw, 120px) 100px;
+      max-width: 1200px; margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.6em;
+      color: var(--gold1); text-transform: uppercase; text-align: center;
+      opacity: 0.8; margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 300;
+      text-align: center; color: var(--cream); letter-spacing: 0.05em;
+      margin-bottom: 60px; line-height: 1.2;
+    }
+    .section-title em { font-style: italic; color: var(--gold3); }
+
+    .division-featured {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 60px;
+      align-items: center; margin-bottom: 80px;
+    }
+
+    .division-badge {
+      display: inline-block; padding: 6px 20px;
+      border: 1px solid var(--gold1);
+      font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.4em;
+      color: var(--gold2); text-transform: uppercase; margin-bottom: 24px;
+    }
+
+    .division-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 300;
+      color: var(--cream); line-height: 1.1; margin-bottom: 20px;
+    }
+    .division-name em { font-style: italic; color: var(--gold3); display: block; }
+
+    .division-desc {
+      font-size: 0.95rem; line-height: 1.9; color: var(--text);
+      opacity: 0.8; margin-bottom: 32px; max-width: 420px;
+    }
+
+    .division-visual {
+      position: relative; display: flex; align-items: center; justify-content: center;
+    }
+
+    /* 5-piece art preview */
+    .art-grid-preview {
+      width: 100%; max-width: 380px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 10px;
+    }
+
+    .art-panel {
+      background: var(--deep);
+      border: 1px solid rgba(201,149,42,0.22);
+      border-radius: 2px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      font-size: 2rem; padding: 20px 12px 28px;
+      position: relative; overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s;
+      min-height: 100px;
+    }
+    .art-panel::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(201,149,42,0.06), transparent);
+    }
+    .art-panel:hover { border-color: rgba(201,149,42,0.55); transform: scale(1.03); }
+
+    /* tall center panel */
+    .art-panel.tall { grid-row: span 2; font-size: 2.8rem; min-height: 220px; }
+
+    .art-panel-label {
+      position: absolute; bottom: 8px; left: 0; right: 0;
+      text-align: center;
+      font-family: 'Cinzel', serif; font-size: 0.42rem; letter-spacing: 0.2em;
+      color: var(--gold1); opacity: 0.6; z-index: 1;
+      text-transform: uppercase;
+    }
+
+    /* coming soon divisions */
+    .coming-soon-section { margin-top: 40px; }
+
+    .coming-label {
+      font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.5em;
+      color: var(--gold1); opacity: 0.6; text-transform: uppercase;
+      text-align: center; margin-bottom: 32px;
+    }
+
+    .divisions-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px;
+    }
+
+    .division-pill {
+      border: 1px solid rgba(201,149,42,0.18);
+      padding: 22px 16px; text-align: center;
+      position: relative; overflow: hidden;
+      transition: border-color 0.3s;
+    }
+    .division-pill::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(201,149,42,0.04), transparent);
+    }
+    .division-pill:hover { border-color: rgba(201,149,42,0.4); }
+
+    .pill-icon { font-size: 1.4rem; display: block; margin-bottom: 10px; }
+    .pill-name {
+      font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.2em;
+      color: var(--gold2); text-transform: uppercase; opacity: 0.7;
+    }
+    .pill-soon {
+      display: block; font-size: 0.48rem; color: var(--gold1); opacity: 0.4;
+      margin-top: 6px; letter-spacing: 0.2em; font-family: 'Cinzel', serif;
+    }
+
+    /* PROMISE STRIP */
+    .promise-strip {
+      border-top: 1px solid rgba(201,149,42,0.15);
+      border-bottom: 1px solid rgba(201,149,42,0.15);
+      background: rgba(201,149,42,0.03);
+      padding: 56px clamp(24px, 8vw, 120px);
+    }
+    .promise-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px;
+      text-align: center;
+    }
+    .promise-item-icon { font-size: 1.4rem; margin-bottom: 12px; display: block; }
+    .promise-item-title {
+      font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.3em;
+      color: var(--gold2); text-transform: uppercase; margin-bottom: 10px;
+    }
+    .promise-item-text { font-size: 0.82rem; line-height: 1.75; opacity: 0.6; }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(8,7,5,0.92);
+      z-index: 2000;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.4s;
+    }
+    .modal-overlay.active { opacity: 1; pointer-events: all; }
+
+    .modal {
+      border: 1px solid var(--gold1);
+      padding: 52px 48px; max-width: 460px; width: 90%;
+      text-align: center; position: relative; background: var(--deep);
+      transform: translateY(20px); transition: transform 0.4s;
+    }
+    .modal-overlay.active .modal { transform: translateY(0); }
+
+    .modal-close {
+      position: absolute; top: 16px; right: 20px;
+      background: none; border: none; color: var(--gold1);
+      font-size: 1.2rem; cursor: pointer; opacity: 0.6; transition: opacity 0.2s;
+    }
+    .modal-close:hover { opacity: 1; }
+
+    .modal-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.9rem; font-weight: 300; color: var(--cream); margin-bottom: 10px;
+    }
+    .modal-sub { font-size: 0.82rem; opacity: 0.6; margin-bottom: 32px; line-height: 1.7; }
+
+    .modal-input {
+      width: 100%; background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(201,149,42,0.3);
+      padding: 14px 20px; color: var(--cream);
+      font-family: 'Lato', sans-serif; font-size: 0.85rem;
+      outline: none; margin-bottom: 16px; transition: border-color 0.3s;
+    }
+    .modal-input:focus { border-color: var(--gold1); }
+    .modal-input::placeholder { opacity: 0.4; }
+
+    /* FOOTER */
+    footer { padding: 60px clamp(24px, 8vw, 120px) 40px; text-align: center; }
+    .footer-logo {
+      font-family: 'Cormorant Garamond', serif; font-style: italic;
+      font-size: 1.5rem; color: var(--gold2); opacity: 0.7; margin-bottom: 14px;
+    }
+    .footer-tagline {
+      font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.5em;
+      color: var(--gold1); opacity: 0.4; text-transform: uppercase; margin-bottom: 32px;
+    }
+    .footer-links {
+      display: flex; justify-content: center; gap: 32px; list-style: none; margin-bottom: 40px;
+    }
+    .footer-links a {
+      font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.3em;
+      color: var(--text); text-decoration: none; opacity: 0.4; transition: opacity 0.3s, color 0.3s;
+    }
+    .footer-links a:hover { opacity: 0.8; color: var(--gold2); }
+    .footer-copy { font-size: 0.7rem; opacity: 0.22; }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scrollDown {
+      0%   { transform: scaleY(0); transform-origin: top; }
+      50%  { transform: scaleY(1); transform-origin: top; }
+      51%  { transform: scaleY(1); transform-origin: bottom; }
+      100% { transform: scaleY(0); transform-origin: bottom; }
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      nav { padding: 16px 24px; }
+      .nav-links { display: none; }
+      .division-featured { grid-template-columns: 1fr; gap: 40px; }
+      .division-visual { order: -1; }
+      .promise-inner { grid-template-columns: 1fr; gap: 32px; }
+      .art-grid-preview { max-width: 300px; margin: 0 auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">Frame &amp; Fortune</a>
+    <ul class="nav-links">
+      <li><a href="#collections">Collections</a></li>
+      <li><a href="#" onclick="openModal(); return false;">Shop</a></li>
+      <li><a href="mailto:hello@frameandfortuneusa.com">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-rule"></div>
+
+    <div class="logo-wrap">
+      <img src="6A5D172A-8633-4AA6-8E22-FF01AF5E9D6A.png" alt="Frame &amp; Fortune Logo" />
+    </div>
+
+    <p class="hero-tagline">Frame What You Love</p>
+    <p class="hero-sub">Premium Wall Art Sets &nbsp;·&nbsp; Designed to Delight</p>
+
+    <div class="ornament">
+      <div class="ornament-line"></div>
+      <div class="ornament-diamond"></div>
+      <div class="ornament-line right"></div>
+    </div>
+
+    <div class="cta-group">
+      <a href="#" class="btn-primary" onclick="openModal(); return false;"><span>Shop on Amazon</span></a>
+      <button class="btn-notify" onclick="openModal()">Notify me when the store launches</button>
+    </div>
+
+    <div class="scroll-hint">
+      <span>Explore</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </section>
+
+  <!-- DIVIDER -->
+  <div class="section-divider">
+    <div class="divider-line"></div>
+    <span class="divider-icon">✦</span>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- COLLECTIONS -->
+  <section class="collections" id="collections">
+    <p class="section-label">Our Collections</p>
+    <h2 class="section-title">Art that tells <em>your story</em></h2>
+
+    <!-- KIDS DIVISION -->
+    <div class="division-featured">
+      <div class="division-content">
+        <span class="division-badge">Now Available</span>
+        <h3 class="division-name">The Kids <em>Division</em></h3>
+        <p class="division-desc">Five-piece wall art sets made for young adventurers and curious minds. Our vehicle and transportation collections transform any room into a world of wonder — bold, vibrant, and built to inspire the next generation of dreamers.</p>
+        <a href="#" class="btn-primary" onclick="openModal(); return false;"><span>Browse Kids Collection</span></a>
+      </div>
+
+      <div class="division-visual">
+        <div class="art-grid-preview">
+          <!-- Row 1: panel, tall center (spans 2 rows), panel -->
+          <div class="art-panel">🚒<span class="art-panel-label">Fire Truck</span></div>
+          <div class="art-panel tall">🚂<span class="art-panel-label">Train</span></div>
+          <div class="art-panel">✈️<span class="art-panel-label">Airplane</span></div>
+          <!-- Row 2: panel, [tall continues], panel -->
+          <div class="art-panel">🚀<span class="art-panel-label">Rocket</span></div>
+          <div class="art-panel">🚢<span class="art-panel-label">Ship</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMING SOON -->
+    <div class="coming-soon-section">
+      <p class="coming-label">Coming Soon &nbsp;—&nbsp; More Divisions</p>
+      <div class="divisions-grid">
+        <div class="division-pill">
+          <span class="pill-icon">🏠</span>
+          <span class="pill-name">Home Décor</span>
+          <span class="pill-soon">Coming Soon</span>
+        </div>
+        <div class="division-pill">
+          <span class="pill-icon">😂</span>
+          <span class="pill-name">Funny</span>
+          <span class="pill-soon">Coming Soon</span>
+        </div>
+        <div class="division-pill">
+          <span class="pill-icon">🛁</span>
+          <span class="pill-name">Bathroom</span>
+          <span class="pill-soon">Coming Soon</span>
+        </div>
+        <div class="division-pill">
+          <span class="pill-icon">📺</span>
+          <span class="pill-name">Ridiculous Ads</span>
+          <span class="pill-soon">Coming Soon</span>
+        </div>
+        <div class="division-pill">
+          <span class="pill-icon">🍺</span>
+          <span class="pill-name">Vintage Beer &amp; Wine</span>
+          <span class="pill-soon">Coming Soon</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROMISE STRIP -->
+  <div class="promise-strip">
+    <div class="promise-inner">
+      <div class="promise-item">
+        <span class="promise-item-icon">🖼️</span>
+        <p class="promise-item-title">5-Piece Sets</p>
+        <p class="promise-item-text">Curated gallery wall sets designed to hang together perfectly — no guesswork, just stunning results.</p>
+      </div>
+      <div class="promise-item">
+        <span class="promise-item-icon">✦</span>
+        <p class="promise-item-title">Premium Quality</p>
+        <p class="promise-item-text">Vivid prints on archival-quality materials, made to last a lifetime and fill your walls with joy.</p>
+      </div>
+      <div class="promise-item">
+        <span class="promise-item-icon">🚚</span>
+        <p class="promise-item-title">Ships via Amazon</p>
+        <p class="promise-item-text">Reliable fulfillment you can count on. Fast shipping, easy returns, and Prime-ready availability.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p class="footer-logo">Frame &amp; Fortune</p>
+    <p class="footer-tagline">Frame What You Love</p>
+    <ul class="footer-links">
+      <li><a href="#collections">Collections</a></li>
+      <li><a href="#" onclick="openModal(); return false;">Shop</a></li>
+      <li><a href="mailto:hello@frameandfortuneusa.com">Contact</a></li>
+    </ul>
+    <p class="footer-copy">&copy; 2026 Frame &amp; Fortune &nbsp;|&nbsp; frameandfortuneusa.com</p>
+  </footer>
+
+  <!-- NOTIFY MODAL -->
+  <div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <p class="modal-title">Stay in the Loop</p>
+      <p class="modal-sub">Our Amazon store is launching soon. Drop your email and we'll let you know the moment it goes live.</p>
+      <input class="modal-input" type="email" placeholder="your@email.com" id="notifyEmail" />
+      <a href="#" class="btn-primary" style="width:100%; text-align:center; display:block;" onclick="submitNotify(); return false;"><span>Notify Me</span></a>
+    </div>
+  </div>
+
+  <script>
+    function openModal() {
+      document.getElementById('modal').classList.add('active');
+    }
+    function closeModal() {
+      document.getElementById('modal').classList.remove('active');
+    }
+    function closeModalOutside(e) {
+      if (e.target === document.getElementById('modal')) closeModal();
+    }
+    function submitNotify() {
+      const email = document.getElementById('notifyEmail').value;
+      if (!email || !email.includes('@')) {
+        alert('Please enter a valid email address.');
+        return;
+      }
+      // TODO: Wire to Mailchimp / ConvertKit / your email service
+      alert("You're on the list! We'll reach out when the store goes live.");
+      closeModal();
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+  </script>
+
+</body>
+</html>
